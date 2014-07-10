@@ -4,6 +4,10 @@
 #include <boost/asio.hpp>
 #include <mavlink.h>
 
+// ROS
+#include <ros/ros.h>
+#include <tf/tfMessage.h>
+
 #define BUFFER_SIZE 300
 
 #define AXIS_SCALE 1000.0f
@@ -14,7 +18,25 @@
 #define MAVLINK_OFFBOARD_CONTROL_MODE_VELOCITY 3
 #define MAVLINK_OFFBOARD_CONTROL_MODE_POSITION 4
 
-int main(void) {
+void tf_proc_callback(const tf::tfMessage &m)
+{
+	geometry_msgs::TransformStamped f = m.transforms[0];
+	if (strcmp(f.child_frame_id.c_str(), "/map") == 0) {
+		ROS_INFO("%10g %10g %10g\n",
+				f.transform.rotation.x,
+				f.transform.rotation.y,
+				f.transform.rotation.z
+				);
+	}
+	// TODO(yoos): Do something useful with the tf info
+}
+
+int main(int argc, char **argv) {
+	ros::init(argc, argv, "gex_gs");
+	ros::NodeHandle nh;
+
+	ros::Subscriber qex_gs_tf_proc = nh.subscribe("/tf", 10, tf_proc_callback);   // Do we want a positive queue size?
+
 	boost::asio::io_service io;
 	boost::asio::serial_port serial(io, "/dev/ttyUSB0");
 	serial.set_option(boost::asio::serial_port_base::baud_rate(57600));
@@ -42,6 +64,7 @@ int main(void) {
 		boost::asio::write(serial, boost::asio::buffer(buf, len));
 
 		// Sleep 20ms for ~50Hz communication
+		ros::spinOnce();
 		usleep(2e4);
 	}
 
