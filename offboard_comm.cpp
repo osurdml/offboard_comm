@@ -26,14 +26,15 @@ void update_velocity_sp(int cb_idx, float x, float y, float z)
 		target_z = z;
 	}
 
-	sp.roll[0]   = (target_x - tf_x) * AXIS_SCALE; // vy
-	sp.pitch[0]  = (target_y - tf_y) * AXIS_SCALE; // vx
+	sp.roll[0]   =  MAX(MIN(target_y - tf_y, 1), -1) * AXIS_SCALE; // vy
+	sp.pitch[0]  = -MAX(MIN(target_x - tf_x, 1), -1) * AXIS_SCALE; // vx
 	sp.yaw[0]    = 0.0 * AXIS_SCALE; // yawspeed
-	sp.thrust[0] = 0.50 + (target_z - tf_z) * AXIS_SCALE; // vz
+	sp.thrust[0] = MAX(MIN(0.50 - (target_z - tf_z), 1), -1) * AXIS_SCALE; // vz
 
-	ROS_INFO("Map: %10g %10g %10g   Target: %10g %10g %10g\n",
+	ROS_INFO("Map: %6f %6f %6f   Target: %6f %6f %6f   Setpoint: %6d %6d %6u",
 			tf_x, tf_y, tf_z,
-			target_x, target_y, target_z
+			target_x, target_y, target_z,
+			sp.roll[0], sp.pitch[0], sp.thrust[0]
 			);
 }
 
@@ -91,8 +92,6 @@ int main(int argc, char **argv) {
 
 	ros::Rate rate(50); // 50Hz
 	while(ros::ok() && serial.is_open()) {
-		ROS_INFO("Sending...");
-
 		mavlink_message_t message;
 
 		mavlink_msg_set_quad_swarm_roll_pitch_yaw_thrust_encode(255, 0, &message, &sp);

@@ -1,6 +1,9 @@
 #include <tf/tfMessage.h>
 #include <mavlink.h>
 
+#define MAX(a,b) ((a > b) ? a : b)
+#define MIN(a,b) ((a < b) ? a : b)
+
 #define BUFFER_SIZE 300
 
 #define AXIS_SCALE 1000.0f
