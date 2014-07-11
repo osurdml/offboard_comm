@@ -26,10 +26,10 @@ void update_velocity_sp(int cb_idx, float x, float y, float z)
 		target_z = z;
 	}
 
-	sp.roll[0]   = (sp_x - tf_x) * AXIS_SCALE; // vy
-	sp.pitch[0]  = (sp_y - tf_y) * AXIS_SCALE; // vx
+	sp.roll[0]   = (target_x - tf_x) * AXIS_SCALE; // vy
+	sp.pitch[0]  = (target_y - tf_y) * AXIS_SCALE; // vx
 	sp.yaw[0]    = 0.0 * AXIS_SCALE; // yawspeed
-	sp.thrust[0] = 0.50 + (sp_z - tf_z) * AXIS_SCALE; // vz
+	sp.thrust[0] = 0.50 + (target_z - tf_z) * AXIS_SCALE; // vz
 
 	ROS_INFO("Map: %10g %10g %10g   Target: %10g %10g %10g\n",
 			tf_x, tf_y, tf_z,
