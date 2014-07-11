@@ -27,7 +27,9 @@ void tf_proc_callback(const tf::tfMessage &m)
 				f.transform.rotation.y,
 				f.transform.rotation.z
 				);
+
 	}
+	// TODO: Calculate desired velocity vector from tf and setpoint
 	// TODO(yoos): Do something useful with the tf info
 }
 
