@@ -20,7 +20,7 @@ void tf_proc_callback(const tf::tfMessage &m)
 }
 
 int main(int argc, char **argv) {
-	ros::init(argc, argv, "gex_gs");
+	ros::init(argc, argv, "qex_gs");
 	ros::NodeHandle nh;
 
 	ros::Subscriber qex_gs_tf_proc = nh.subscribe("/tf", 10, tf_proc_callback);   // Do we want a positive queue size?
