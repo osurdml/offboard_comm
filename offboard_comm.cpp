@@ -7,7 +7,7 @@
 void tf_proc_callback(const tf::tfMessage &m)
 {
 	geometry_msgs::TransformStamped f = m.transforms[0];
-	if (strcmp(f.child_frame_id.c_str(), "/map") == 0) {
+	if (f.child_frame_id == "/map") {
 		ROS_INFO("%10g %10g %10g\n",
 				f.transform.rotation.x,
 				f.transform.rotation.y,
@@ -19,11 +19,25 @@ void tf_proc_callback(const tf::tfMessage &m)
 	// TODO(yoos): Do something useful with the tf info
 }
 
+void sp_proc_callback(const tf::tfMessage &m)
+{
+	geometry_msgs::TransformStamped f = m.transforms[0];
+	if (f.child_frame_id == "/map") {
+		ROS_INFO("Setpoint: %10g %10g %10g\n",
+				f.transform.rotation.x,
+				f.transform.rotation.y,
+				f.transform.rotation.z
+				);
+
+	}
+}
+
 int main(int argc, char **argv) {
 	ros::init(argc, argv, "qex_gs");
 	ros::NodeHandle nh;
 
-	ros::Subscriber qex_gs_tf_proc = nh.subscribe("/tf", 10, tf_proc_callback);   // Do we want a positive queue size?
+	ros::Subscriber qex_gs_tf_proc = nh.subscribe("/tf", 10, tf_proc_callback);
+	ros::Subscriber qex_gs_sp_proc = nh.subscribe("/sp", 10, sp_proc_callback);
 
 	boost::asio::io_service io;
 	boost::asio::serial_port serial(io, "/dev/ttyUSB0");
