@@ -11,5 +11,6 @@
 #define MAVLINK_OFFBOARD_CONTROL_MODE_POSITION 4
 
 void tf_proc_callback(const tf::tfMessage &m);
+void sp_proc_callback(const tf::tfMessage &m);
 
 int main(int argc, char **argv);
