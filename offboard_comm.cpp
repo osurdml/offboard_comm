@@ -58,11 +58,6 @@ int main(int argc, char **argv) {
 		rate.sleep();
 	}
 
-<<<<<<< Updated upstream
-=======
-	ROS_ERROR("Serial connection closed");
-
->>>>>>> Stashed changes
 	return 0;
 }
 
