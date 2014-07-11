@@ -1,22 +1,8 @@
-#include <iostream>
-#include <fstream>
+#include "offboard_comm.h"
 
 #include <boost/asio.hpp>
 #include <mavlink.h>
-
-// ROS
 #include <ros/ros.h>
-#include <tf/tfMessage.h>
-
-#define BUFFER_SIZE 300
-
-#define AXIS_SCALE 1000.0f
-
-#define MAVLINK_OFFBOARD_CONTROL_MODE_NONE 0
-#define MAVLINK_OFFBOARD_CONTROL_MODE_RATES 1
-#define MAVLINK_OFFBOARD_CONTROL_MODE_ATTITUDE 2
-#define MAVLINK_OFFBOARD_CONTROL_MODE_VELOCITY 3
-#define MAVLINK_OFFBOARD_CONTROL_MODE_POSITION 4
 
 void tf_proc_callback(const tf::tfMessage &m)
 {
