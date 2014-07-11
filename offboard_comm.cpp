@@ -36,15 +36,18 @@ void tf_proc_callback(const tf::tfMessage &m)
 {
 	geometry_msgs::TransformStamped f = m.transforms[0];
 	if (f.child_frame_id == "/map") {
-		ROS_INFO("%10g %10g %10g\n",
+		ROS_INFO("Map: %10g %10g %10g\n",
 				f.transform.translation.x,
 				f.transform.translation.y,
 				f.transform.translation.z
 				);
-
 	}
-	// TODO: Calculate desired velocity vector from tf and setpoint
-	// TODO(yoos): Do something useful with the tf info
+
+	update_velocity_sp(0,
+			f.transform.translation.x,
+			f.transform.translation.y,
+			f.transform.translation.z
+			);
 }
 
 void target_proc_callback(const tf::tfMessage &m)
@@ -56,8 +59,13 @@ void target_proc_callback(const tf::tfMessage &m)
 				f.transform.translation.y,
 				f.transform.translation.z
 				);
-
 	}
+
+	update_velocity_sp(1,
+			f.transform.translation.x,
+			f.transform.translation.y,
+			f.transform.translation.z
+			);
 }
 
 int main(int argc, char **argv) {
