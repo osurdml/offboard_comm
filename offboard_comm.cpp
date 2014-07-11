@@ -9,9 +9,9 @@ void tf_proc_callback(const tf::tfMessage &m)
 	geometry_msgs::TransformStamped f = m.transforms[0];
 	if (f.child_frame_id == "/map") {
 		ROS_INFO("%10g %10g %10g\n",
-				f.transform.rotation.x,
-				f.transform.rotation.y,
-				f.transform.rotation.z
+				f.transform.translation.x,
+				f.transform.translation.y,
+				f.transform.translation.z
 				);
 
 	}
@@ -24,9 +24,9 @@ void sp_proc_callback(const tf::tfMessage &m)
 	geometry_msgs::TransformStamped f = m.transforms[0];
 	if (f.child_frame_id == "/map") {
 		ROS_INFO("Setpoint: %10g %10g %10g\n",
-				f.transform.rotation.x,
-				f.transform.rotation.y,
-				f.transform.rotation.z
+				f.transform.translation.x,
+				f.transform.translation.y,
+				f.transform.translation.z
 				);
 
 	}
