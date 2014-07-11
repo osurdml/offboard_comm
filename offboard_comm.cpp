@@ -45,8 +45,10 @@ int main(int argc, char **argv) {
 	serial.set_option(boost::asio::serial_port::character_size(8));
 
 	char buf[BUFFER_SIZE];
-	while(serial.is_open()) {
-		std::cout << "Sending..." << std::endl;
+
+	ros::Rate rate(50); // 50Hz
+	while(ros::ok() && serial.is_open()) {
+		ROS_INFO("Sending...");
 
 		mavlink_message_t message;
 		mavlink_set_quad_swarm_roll_pitch_yaw_thrust_t sp;
@@ -54,21 +56,19 @@ int main(int argc, char **argv) {
 		sp.group = 0;
 		sp.mode = MAVLINK_OFFBOARD_CONTROL_MODE_VELOCITY;
 
-		sp.roll[0] = 0.0 * AXIS_SCALE;
-		sp.pitch[0] = 0.0 * AXIS_SCALE;
-		sp.yaw[0] = 0.0 * AXIS_SCALE;
-		sp.thrust[0] = 0.50 * AXIS_SCALE;
+		sp.roll[0] = 0.0 * AXIS_SCALE; // vy
+		sp.pitch[0] = 0.0 * AXIS_SCALE; // vx
+		sp.yaw[0] = 0.0 * AXIS_SCALE; // yawspeed
+		sp.thrust[0] = 0.50 * AXIS_SCALE; // vz
 
 		mavlink_msg_set_quad_swarm_roll_pitch_yaw_thrust_encode(255, 0, &message, &sp);
+
 		unsigned len = mavlink_msg_to_send_buffer((uint8_t*) buf, &message);
 		boost::asio::write(serial, boost::asio::buffer(buf, len));
 
-		// Sleep 20ms for ~50Hz communication
 		ros::spinOnce();
-		usleep(2e4);
+		rate.sleep();
 	}
-
-	std::cerr << "Serial connection closed" << std::endl;
 
 	return 0;
 }
