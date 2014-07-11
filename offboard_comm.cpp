@@ -1,8 +1,36 @@
 #include <offboard_comm.h>
 
 #include <boost/asio.hpp>
-#include <mavlink.h>
 #include <ros/ros.h>
+
+void update_velocity_sp(int cb_idx, float x, float y, float z)
+{
+	static float tf_x = 0;
+	static float tf_y = 0;
+	static float tf_z = 0;
+	static float sp_x = 0;
+	static float sp_y = 0;
+	static float sp_z = 0;
+
+	sp.group = 0;
+	sp.mode = MAVLINK_OFFBOARD_CONTROL_MODE_VELOCITY;
+
+	if (cb_idx == 0) {
+		tf_x = x;
+		tf_y = y;
+		tf_z = z;
+	}
+	else if (cb_idx == 1) {
+		sp_x = x;
+		sp_y = y;
+		sp_z = z;
+	}
+
+	sp.roll[0]   = (sp_x - tf_x) * AXIS_SCALE; // vy
+	sp.pitch[0]  = (sp_y - tf_y) * AXIS_SCALE; // vx
+	sp.yaw[0]    = 0.0 * AXIS_SCALE; // yawspeed
+	sp.thrust[0] = 0.50 + (sp_z - tf_z) * AXIS_SCALE; // vz
+}
 
 void tf_proc_callback(const tf::tfMessage &m)
 {
@@ -19,7 +47,7 @@ void tf_proc_callback(const tf::tfMessage &m)
 	// TODO(yoos): Do something useful with the tf info
 }
 
-void sp_proc_callback(const tf::tfMessage &m)
+void target_proc_callback(const tf::tfMessage &m)
 {
 	geometry_msgs::TransformStamped f = m.transforms[0];
 	if (f.child_frame_id == "/map") {
@@ -37,7 +65,7 @@ int main(int argc, char **argv) {
 	ros::NodeHandle nh;
 
 	ros::Subscriber qex_gs_tf_proc = nh.subscribe("/tf", 10, tf_proc_callback);
-	ros::Subscriber qex_gs_sp_proc = nh.subscribe("/sp", 10, sp_proc_callback);
+	ros::Subscriber qex_gs_target_proc = nh.subscribe("/target", 10, target_proc_callback);
 
 	boost::asio::io_service io;
 	boost::asio::serial_port serial(io, "/dev/ttyUSB0");
@@ -53,15 +81,6 @@ int main(int argc, char **argv) {
 		ROS_INFO("Sending...");
 
 		mavlink_message_t message;
-		mavlink_set_quad_swarm_roll_pitch_yaw_thrust_t sp;
-
-		sp.group = 0;
-		sp.mode = MAVLINK_OFFBOARD_CONTROL_MODE_VELOCITY;
-
-		sp.roll[0] = 0.0 * AXIS_SCALE; // vy
-		sp.pitch[0] = 0.0 * AXIS_SCALE; // vx
-		sp.yaw[0] = 0.0 * AXIS_SCALE; // yawspeed
-		sp.thrust[0] = 0.50 * AXIS_SCALE; // vz
 
 		mavlink_msg_set_quad_swarm_roll_pitch_yaw_thrust_encode(255, 0, &message, &sp);
 
