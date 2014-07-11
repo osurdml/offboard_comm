@@ -8,9 +8,9 @@ void update_velocity_sp(int cb_idx, float x, float y, float z)
 	static float tf_x = 0;
 	static float tf_y = 0;
 	static float tf_z = 0;
-	static float sp_x = 0;
-	static float sp_y = 0;
-	static float sp_z = 0;
+	static float target_x = 0;
+	static float target_y = 0;
+	static float target_z = 0;
 
 	sp.group = 0;
 	sp.mode = MAVLINK_OFFBOARD_CONTROL_MODE_VELOCITY;
@@ -21,51 +21,56 @@ void update_velocity_sp(int cb_idx, float x, float y, float z)
 		tf_z = z;
 	}
 	else if (cb_idx == 1) {
-		sp_x = x;
-		sp_y = y;
-		sp_z = z;
+		target_x = x;
+		target_y = y;
+		target_z = z;
 	}
 
 	sp.roll[0]   = (sp_x - tf_x) * AXIS_SCALE; // vy
 	sp.pitch[0]  = (sp_y - tf_y) * AXIS_SCALE; // vx
 	sp.yaw[0]    = 0.0 * AXIS_SCALE; // yawspeed
 	sp.thrust[0] = 0.50 + (sp_z - tf_z) * AXIS_SCALE; // vz
+
+	ROS_INFO("Map: %10g %10g %10g   Target: %10g %10g %10g\n",
+			tf_x, tf_y, tf_z,
+			target_x, target_y, target_z
+			);
 }
 
 void tf_proc_callback(const tf::tfMessage &m)
 {
 	geometry_msgs::TransformStamped f = m.transforms[0];
 	if (f.child_frame_id == "/map") {
-		ROS_INFO("Map: %10g %10g %10g\n",
+		//ROS_INFO("Map: %10g %10g %10g\n",
+		//		f.transform.translation.x,
+		//		f.transform.translation.y,
+		//		f.transform.translation.z
+		//		);
+
+		update_velocity_sp(0,
 				f.transform.translation.x,
 				f.transform.translation.y,
 				f.transform.translation.z
 				);
 	}
-
-	update_velocity_sp(0,
-			f.transform.translation.x,
-			f.transform.translation.y,
-			f.transform.translation.z
-			);
 }
 
 void target_proc_callback(const tf::tfMessage &m)
 {
 	geometry_msgs::TransformStamped f = m.transforms[0];
 	if (f.child_frame_id == "/map") {
-		ROS_INFO("Setpoint: %10g %10g %10g\n",
+		//ROS_INFO("Target: %10g %10g %10g\n",
+		//		f.transform.translation.x,
+		//		f.transform.translation.y,
+		//		f.transform.translation.z
+		//		);
+
+		update_velocity_sp(1,
 				f.transform.translation.x,
 				f.transform.translation.y,
 				f.transform.translation.z
 				);
 	}
-
-	update_velocity_sp(1,
-			f.transform.translation.x,
-			f.transform.translation.y,
-			f.transform.translation.z
-			);
 }
 
 int main(int argc, char **argv) {
