@@ -8,7 +8,7 @@ void tf_proc_callback(const tf::tfMessage &m)
 {
 	geometry_msgs::TransformStamped f = m.transforms[0];
 	if (strcmp(f.child_frame_id.c_str(), "/map") == 0) {
-		ROS_INFO("%10g %10g %10g\n",
+		ROS_INFO("%10g %10g %10g",
 				f.transform.rotation.x,
 				f.transform.rotation.y,
 				f.transform.rotation.z
@@ -58,6 +58,11 @@ int main(int argc, char **argv) {
 		rate.sleep();
 	}
 
+<<<<<<< Updated upstream
+=======
+	ROS_ERROR("Serial connection closed");
+
+>>>>>>> Stashed changes
 	return 0;
 }
 
