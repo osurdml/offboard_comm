@@ -93,15 +93,21 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(. include include/common)
+include_directories(include include/mavlink include/mavlink/common)
+
+link_directories(src)
 
 ## Declare a cpp library
-# add_library(offboard_comm
-#   src/${PROJECT_NAME}/offboard_comm.cpp
-# )
+add_library(offboard_comm
+  src/offboard_comm.cpp
+)
+
+add_library(setpoint_transmitter
+  src/setpoint_transmitter.cpp
+)
 
 ## Declare a cpp executable
-add_executable(offboard_comm_node offboard_comm.cpp)
+add_executable(offboard_comm_node src/offboard_comm.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -109,6 +115,7 @@ add_executable(offboard_comm_node offboard_comm.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(offboard_comm_node
+  setpoint_transmitter
   ${catkin_LIBRARIES}
 )
 
