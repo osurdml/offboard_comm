@@ -6,7 +6,7 @@
 
 int main(int argc, char **argv) {
 	ros::init(argc, argv, "qex_gs");
-	ros::NodeHandle nh;
+	ros::NodeHandle nh("~");
 
 	SetpointTransmitter *transmitter = new SetpointTransmitter();
 
