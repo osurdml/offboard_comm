@@ -6,6 +6,9 @@ SetpointTransmitter::SetpointTransmitter() {
 	serial_port->set_option(boost::asio::serial_port::parity(boost::asio::serial_port::parity::none));
 	serial_port->set_option(boost::asio::serial_port::stop_bits(boost::asio::serial_port::stop_bits::one));
 	serial_port->set_option(boost::asio::serial_port::character_size(8));
+
+	sp.group = 0;
+	sp.mode = MAVLINK_OFFBOARD_CONTROL_MODE_VELOCITY;
 }
 
 SetpointTransmitter::~SetpointTransmitter() {
@@ -26,9 +29,6 @@ void SetpointTransmitter::targetProcCallback(const tf::tfMessage& m) {
 }
 
 void SetpointTransmitter::updateVelocitySetpoint() {
-	sp.group = 0;
-	sp.mode = MAVLINK_OFFBOARD_CONTROL_MODE_VELOCITY;
-
 	sp.roll[0]   =  limit(-1.0, 1.0, target.translation.y - tf.translation.y) * AXIS_SCALE; // vy
 	sp.pitch[0]  = -limit(-1.0, 1.0, target.translation.x - tf.translation.x) * AXIS_SCALE; // vx
 	sp.yaw[0]    =  0.0 * AXIS_SCALE; // yawspeed
