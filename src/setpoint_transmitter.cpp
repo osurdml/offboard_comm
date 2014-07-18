@@ -1,11 +1,15 @@
 #include <setpoint_transmitter.h>
 
+#include <string.h>
+
 SetpointTransmitter::SetpointTransmitter() {
 	serial_port = serial_port_ptr(new boost::asio::serial_port(io, "/dev/ttyUSB0"));
 	serial_port->set_option(boost::asio::serial_port_base::baud_rate(57600));
 	serial_port->set_option(boost::asio::serial_port::parity(boost::asio::serial_port::parity::none));
 	serial_port->set_option(boost::asio::serial_port::stop_bits(boost::asio::serial_port::stop_bits::one));
 	serial_port->set_option(boost::asio::serial_port::character_size(8));
+
+	memset(&sp, 0, sizeof(sp));
 
 	sp.group = 0;
 	sp.mode = MAVLINK_OFFBOARD_CONTROL_MODE_VELOCITY;
