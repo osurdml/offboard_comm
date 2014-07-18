@@ -17,6 +17,7 @@ int main(int argc, char **argv) {
 	while(ros::ok()) {
 		ROS_INFO("Sending...");
 
+		// TODO: Reset SP after some timeout on the TF topic
 		transmitter->transmit();
 
 		ros::spinOnce();
