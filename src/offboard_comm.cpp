@@ -15,8 +15,6 @@ int main(int argc, char **argv) {
 
 	ros::Rate rate(50); // 50Hz
 	while(ros::ok()) {
-		ROS_INFO("Sending...");
-
 		transmitter->transmit();
 
 		ros::spinOnce();

@@ -12,6 +12,7 @@ void SetpointTransmitter::tfProcCallback(const tf::tfMessage& m) {
 	if (m.transforms[0].child_frame_id == "/map") {
 		tf = m.transforms[0].transform;
 	}
+	updateVelocitySetpoint();
 }
 
 void SetpointTransmitter::targetProcCallback(const tf::tfMessage& m) {
@@ -19,6 +20,7 @@ void SetpointTransmitter::targetProcCallback(const tf::tfMessage& m) {
 	if (m.transforms[0].child_frame_id == "/map") {
 		target = m.transforms[0].transform;
 	}
+	updateVelocitySetpoint();
 }
 
 void SetpointTransmitter::updateVelocitySetpoint() {
