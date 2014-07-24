@@ -34,9 +34,9 @@ void SetpointTransmitter::targetProcCallback(const tf::tfMessage& m) {
 
 void SetpointTransmitter::updateVelocitySetpoint() {
 	sp.roll[0]   =  limit(-1.0, 1.0, target.translation.y - tf.translation.y) * AXIS_SCALE; // vy
-	sp.pitch[0]  = -limit(-1.0, 1.0, target.translation.x - tf.translation.x) * AXIS_SCALE; // vx
+	sp.pitch[0]  =  limit(-1.0, 1.0, target.translation.x - tf.translation.x) * AXIS_SCALE; // vx
 	sp.yaw[0]    =  0.0 * AXIS_SCALE; // yawspeed
-	sp.thrust[0] =  limit(0.0, 1.0, 0.50 - (target.translation.z - tf.translation.z)) * AXIS_SCALE; // vz
+	sp.thrust[0] =  limit(0.0, 1.0, 0.50 + (target.translation.z - tf.translation.z)) * AXIS_SCALE; // vz
 
 	ROS_INFO("Map: %6f %6f %6f   Target: %6f %6f %6f   Setpoint: %6d %6d %6u",
 			tf.translation.x, tf.translation.y, tf.translation.z,
