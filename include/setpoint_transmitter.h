@@ -7,7 +7,8 @@
 #include <mavlink.h>
 
 #include <ros/ros.h>
-#include <tf/tfMessage.h>
+#include <tf/transform_datatypes.h>
+#include <geometry_msgs/Pose.h>
 
 #define BUFFER_SIZE 300
 
@@ -26,20 +27,13 @@ public:
 	SetpointTransmitter();
 	~SetpointTransmitter();
 
-	void tfProcCallback(const tf::tfMessage &m);
-	void targetProcCallback(const tf::tfMessage &m);
-
-	void updateVelocitySetpoint();
-
+	void updateVelocitySetpoint(tf::Transform tf, geometry_msgs::Pose goal);
 	void transmit();
 
 private:
 	double limit(double min, double max, double v) {
 		return std::max(std::min(v, max), min);
 	}
-
-	geometry_msgs::Transform tf;
-	geometry_msgs::Transform target;
 
 	mavlink_set_quad_swarm_roll_pitch_yaw_thrust_t sp;
 

@@ -18,31 +18,15 @@ SetpointTransmitter::SetpointTransmitter() {
 SetpointTransmitter::~SetpointTransmitter() {
 }
 
-void SetpointTransmitter::tfProcCallback(const tf::tfMessage& m) {
-	geometry_msgs::TransformStamped f = m.transforms[0];
-	if (m.transforms[0].child_frame_id == "/map") {
-		tf = m.transforms[0].transform;
-	}
-	updateVelocitySetpoint();
-}
-
-void SetpointTransmitter::targetProcCallback(const tf::tfMessage& m) {
-	geometry_msgs::TransformStamped f = m.transforms[0];
-	if (m.transforms[0].child_frame_id == "/map") {
-		target = m.transforms[0].transform;
-	}
-	updateVelocitySetpoint();
-}
-
-void SetpointTransmitter::updateVelocitySetpoint() {
-	sp.roll[0]   =  limit(-1.0, 1.0, target.translation.y - tf.translation.y) * AXIS_SCALE; // vy
-	sp.pitch[0]  =  limit(-1.0, 1.0, target.translation.x - tf.translation.x) * AXIS_SCALE; // vx
+void SetpointTransmitter::updateVelocitySetpoint(tf::Transform tf, geometry_msgs::Pose goal) {
+	sp.roll[0]   =  limit(-1.0, 1.0, goal.position.y - tf.getOrigin().y()) * AXIS_SCALE; // vy
+	sp.pitch[0]  =  limit(-1.0, 1.0, goal.position.x - tf.getOrigin().x()) * AXIS_SCALE; // vx
 	sp.yaw[0]    =  0.0 * AXIS_SCALE; // yawspeed
-	sp.thrust[0] =  limit(0.0, 1.0, 0.50 + (target.translation.z - tf.translation.z)) * AXIS_SCALE; // vz
+	sp.thrust[0] =  limit(0.0, 1.0, 0.50 + (goal.position.z - tf.getOrigin().z())) * AXIS_SCALE; // vz
 
 	ROS_INFO("Map: %6f %6f %6f   Target: %6f %6f %6f   Setpoint: %6d %6d %6u",
-			tf.translation.x, tf.translation.y, tf.translation.z,
-			target.translation.x, target.translation.y, target.translation.z,
+			tf.getOrigin().x(), tf.getOrigin().y(), tf.getOrigin().z(),
+			goal.position.x, goal.position.y, goal.position.z,
 			sp.roll[0], sp.pitch[0], sp.thrust[0]
 			);
 }
