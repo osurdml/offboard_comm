@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 	ros::Subscriber qex_gs_tf_proc = nh.subscribe("/tf", 10, &SetpointTransmitter::tfProcCallback, transmitter);
 	ros::Subscriber qex_gs_target_proc = nh.subscribe("/target", 10, &SetpointTransmitter::targetProcCallback, transmitter);
 
-	ros::Rate rate(5); // 5Hz
+	ros::Rate rate(10); // 5Hz
 	while(ros::ok()) {
 		ROS_INFO("Sending...");
 
