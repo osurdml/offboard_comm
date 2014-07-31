@@ -15,8 +15,8 @@ void actionCallback(const move_base_msgs::MoveBaseGoalConstPtr &action) {
 	tf::StampedTransform transform;
 
 	ros::Time now(0);
-	listener.waitForTransform("/base_link", "/map", now, ros::Duration(1.0));
-	listener.lookupTransform("/base_link", "/map", now, transform);
+	listener.waitForTransform("/camera_link", "/map", now, ros::Duration(1.0));
+	listener.lookupTransform("/camera_link", "/map", now, transform);
 
 	transmitter->updateVelocitySetpoint(transform, action->target_pose.pose);
 }
