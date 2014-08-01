@@ -12,7 +12,8 @@
 #include <setpoint_transmitter.h>
 
 SetpointTransmitter *transmitter;
-actionlib::SimpleActionClient<frontier_exploration::ExploreTaskAction> ac("/explore_server", true);
+actionlib::SimpleActionClient<frontier_exploration::ExploreTaskAction> *ac;
+
 
 void moveBaseCallback(const move_base_msgs::MoveBaseGoalConstPtr& action) {
   ROS_INFO("Got move_base command");
@@ -56,11 +57,11 @@ void updateFrontierCallback(const ros::TimerEvent& e) {
 	action.explore_boundary = boundary;
 	action.explore_center = center;
 
-	ac.sendGoal(action);
+	ac->sendGoal(action);
 
-	bool finished = ac.waitForResult(ros::Duration(5.0));
+	bool finished = ac->waitForResult(ros::Duration(5.0));
 	if(finished) {
-		actionlib::SimpleClientGoalState state = ac.getState();
+		actionlib::SimpleClientGoalState state = ac->getState();
 
 		ROS_INFO("Got updated frontier");
 	} else {
@@ -74,11 +75,13 @@ int main(int argc, char **argv) {
 
 	transmitter = new SetpointTransmitter();
 
+	ac = new actionlib::SimpleActionClient<frontier_exploration::ExploreTaskAction>("/explore_server", true);
+
 	actionlib::SimpleActionServer<move_base_msgs::MoveBaseAction> as(nh, "/move_base", &moveBaseCallback, false);
 	as.start();
 
 	ROS_INFO("Waiting for frontier_exploration server");
-	ac.waitForServer();
+	ac->waitForServer();
 	ROS_INFO("Connected to frontier_exploration server");
 
 	ros::Timer updateFrontierTimer = nh.createTimer(ros::Duration(5.0), updateFrontierCallback);
