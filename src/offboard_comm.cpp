@@ -12,7 +12,7 @@
 #include <setpoint_transmitter.h>
 
 SetpointTransmitter *transmitter;
-actionlib::SimpleActionClient<frontier_exploration::ExploreTaskAction> ac("/exploration_server", true);
+actionlib::SimpleActionClient<frontier_exploration::ExploreTaskAction> ac("/explore_server", true);
 
 void moveBaseCallback(const move_base_msgs::MoveBaseGoalConstPtr& action) {
   ROS_INFO("Got move_base command");
