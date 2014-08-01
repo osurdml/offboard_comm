@@ -4,12 +4,12 @@ project(offboard_comm)
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp actionlib tf)
+find_package(catkin REQUIRED COMPONENTS roscpp actionlib frontier_exploration)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system)
@@ -83,7 +83,7 @@ find_package(Boost REQUIRED COMPONENTS system)
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES offboard_comm
-  CATKIN_DEPENDS actionlib actionlib_msgs move_base_msgs
+  CATKIN_DEPENDS actionlib frontier_exploration
 #  DEPENDS system_lib
 )
 
