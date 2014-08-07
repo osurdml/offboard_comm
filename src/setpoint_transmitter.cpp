@@ -34,7 +34,7 @@ void SetpointTransmitter::updateVelocitySetpoint(tf::Transform tf, geometry_msgs
 void SetpointTransmitter::transmit() {
 	mavlink_message_t message;
 
-	mavlink_msg_set_quad_swarm_roll_pitch_yaw_thrust_encode(255, 0, &message, &sp);
+	mavlink_msg_set_quad_swarm_roll_pitch_yaw_thrust_encode(0xFF, 0, &message, &sp);
 
 	uint8_t buf[BUFFER_SIZE];
 	unsigned len = mavlink_msg_to_send_buffer(buf, &message);

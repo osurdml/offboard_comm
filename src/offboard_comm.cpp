@@ -2,22 +2,14 @@
 
 #include <ros/ros.h>
 #include <actionlib/client/simple_action_client.h>
-#include <actionlib/server/simple_action_server.h>
 #include <geometry_msgs/PolygonStamped.h>
 #include <geometry_msgs/PointStamped.h>
-#include <move_base_msgs/MoveBaseAction.h>
-#include <move_base_msgs/MoveBaseGoal.h>
 #include <frontier_exploration/ExploreTaskAction.h>
 
 #include <setpoint_transmitter.h>
 
 SetpointTransmitter *transmitter;
 actionlib::SimpleActionClient<frontier_exploration::ExploreTaskAction> *ac;
-
-
-void moveBaseCallback(const move_base_msgs::MoveBaseGoalConstPtr& action) {
-  ROS_INFO("Got move_base command");
-}
 
 void updateFrontierCallback(const ros::TimerEvent& e) {
 	ROS_INFO("Updating frontier");
@@ -76,9 +68,6 @@ int main(int argc, char **argv) {
 	transmitter = new SetpointTransmitter();
 
 	ac = new actionlib::SimpleActionClient<frontier_exploration::ExploreTaskAction>("/explore_server", true);
-
-	actionlib::SimpleActionServer<move_base_msgs::MoveBaseAction> as(nh, "/move_base", &moveBaseCallback, false);
-	as.start();
 
 	ROS_INFO("Waiting for frontier_exploration server");
 	ac->waitForServer();
