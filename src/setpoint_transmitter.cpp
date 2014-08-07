@@ -19,10 +19,10 @@ SetpointTransmitter::~SetpointTransmitter() {
 }
 
 void SetpointTransmitter::updateVelocitySetpoint(tf::Transform tf, geometry_msgs::Pose goal) {
-	sp.roll[0]   =  limit(-1.0, 1.0, goal.position.y - tf.getOrigin().y()) * AXIS_SCALE; // vy
-	sp.pitch[0]  =  limit(-1.0, 1.0, goal.position.x - tf.getOrigin().x()) * AXIS_SCALE; // vx
-	sp.yaw[0]    =  0.0 * AXIS_SCALE; // yawspeed
-	sp.thrust[0] =  limit(0.0, 1.0, 0.50 + (goal.position.z - tf.getOrigin().z())) * AXIS_SCALE; // vz
+	sp.roll[0]   =  (int16_t)  (limit(-1.0, 1.0, goal.position.y - tf.getOrigin().y()) * AXIS_SCALE); // vy
+	sp.pitch[0]  =  (int16_t)  (limit(-1.0, 1.0, goal.position.x - tf.getOrigin().x()) * AXIS_SCALE); // vx
+	sp.yaw[0]    =  (int16_t)  (0.0 * AXIS_SCALE); // yawspeed
+	sp.thrust[0] =  (uint16_t) (limit(0.0, 1.0, 0.50 + (goal.position.z - tf.getOrigin().z()))) * AXIS_SCALE; // vz
 
 	ROS_INFO("Map: %6f %6f %6f   Target: %6f %6f %6f   Setpoint: %6d %6d %6u",
 			tf.getOrigin().x(), tf.getOrigin().y(), tf.getOrigin().z(),
