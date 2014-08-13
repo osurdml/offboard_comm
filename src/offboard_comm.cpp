@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
 	ros::NodeHandle nh("~");
 
 	SetpointTransmitter transmitter;
-	nh.subscribe("/cmd_vel", 10, &SetpointTransmitter::setpointCallback, &transmitter);
+	ros::Subscriber velSubscriber = nh.subscribe("/cmd_vel", 10, &SetpointTransmitter::setpointCallback, &transmitter);
 
 	ac = new actionlib::SimpleActionClient<frontier_exploration::ExploreTaskAction>("/explore_server", true);
 
