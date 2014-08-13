@@ -65,7 +65,8 @@ int main(int argc, char **argv) {
 	ros::init(argc, argv, "qex_gs");
 	ros::NodeHandle nh("~");
 
-	transmitter = new SetpointTransmitter();
+	SetpointTransmitter transmitter;
+	nh.subscribe("/cmd_vel", 10, &SetpointTransmitter::setpointCallback, &transmitter);
 
 	ac = new actionlib::SimpleActionClient<frontier_exploration::ExploreTaskAction>("/explore_server", true);
 
@@ -79,7 +80,7 @@ int main(int argc, char **argv) {
 	while(ros::ok()) {
 		ROS_INFO("Sending...");
 
-		transmitter->transmit();
+		transmitter.transmit();
 
 		ros::spinOnce();
 		rate.sleep();

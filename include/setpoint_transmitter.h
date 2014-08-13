@@ -7,8 +7,7 @@
 #include <mavlink.h>
 
 #include <ros/ros.h>
-#include <tf/transform_datatypes.h>
-#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/Twist.h>
 
 #define BUFFER_SIZE 300
 
@@ -27,7 +26,7 @@ public:
 	SetpointTransmitter();
 	~SetpointTransmitter();
 
-	void updateVelocitySetpoint(tf::Transform tf, geometry_msgs::Pose goal);
+	void setpointCallback(const geometry_msgs::Twist& twist);
 	void transmit();
 
 private:
