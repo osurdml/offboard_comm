@@ -8,39 +8,40 @@
 
 #include <setpoint_transmitter.h>
 
-SetpointTransmitter *transmitter;
 actionlib::SimpleActionClient<frontier_exploration::ExploreTaskAction> *ac;
 
 void updateFrontierCallback(const ros::TimerEvent& e) {
 	ROS_INFO("Updating frontier");
 
 	geometry_msgs::PolygonStamped boundary;
+	boundary.header.frame_id = "/map";
 
 	geometry_msgs::Point32 point1;
-	point1.x = -10.0f;
-	point1.y = -10.0f;
+	point1.x = -2.0f;
+	point1.y = -2.0f;
 	point1.z = 0.0f;
 	boundary.polygon.points.push_back(point1);
 
 	geometry_msgs::Point32 point2;
-	point2.x = -10.0f;
-	point2.y = 10.0f;
+	point2.x = -2.0f;
+	point2.y = 2.0f;
 	point2.z = 0.0f;
 	boundary.polygon.points.push_back(point2);
 
 	geometry_msgs::Point32 point3;
-	point3.x = 10.0f;
-	point3.y = 10.0f;
+	point3.x = 2.0f;
+	point3.y = 2.0f;
 	point3.z = 0.0f;
 	boundary.polygon.points.push_back(point3);
 
 	geometry_msgs::Point32 point4;
-	point4.x = 10.0f;
-	point4.y = -10.0f;
+	point4.x = 2.0f;
+	point4.y = -2.0f;
 	point4.z = 0.0f;
 	boundary.polygon.points.push_back(point4);
 
 	geometry_msgs::PointStamped center;
+	center.header.frame_id = "/map";
 	center.point.x = 0.0f;
 	center.point.y = 0.0f;
 	center.point.z = 0.0f;
