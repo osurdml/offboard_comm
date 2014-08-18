@@ -22,6 +22,8 @@ void SetpointTransmitter::setpointCallback(const geometry_msgs::Twist& twist) {
 	sp.roll[0]   =  (int16_t)  (limit(-1.0, 1.0, twist.linear.y) * AXIS_SCALE); // vy
 	sp.pitch[0]  =  (int16_t)  (limit(-1.0, 1.0, twist.linear.x) * AXIS_SCALE); // vx
 	sp.yaw[0]    =  (int16_t)  (limit(-1.0, 1.0, twist.angular.z) * AXIS_SCALE); // yawspeed
+	// NOTE: PX4/Firmware modified to accept positional thrust values rather
+	// than velocities.
 	sp.thrust[0] =  (uint16_t) (1.5 * AXIS_SCALE); // z
 
 	ROS_INFO("Setpoint: %6d %6d %6d %6u",
