@@ -1,16 +1,18 @@
 #include <offboard_comm.h>
 
-#include <ros/ros.h>
-#include <actionlib/client/simple_action_client.h>
 #include <geometry_msgs/PolygonStamped.h>
 #include <geometry_msgs/PointStamped.h>
-#include <frontier_exploration/ExploreTaskAction.h>
 
-#include <setpoint_transmitter.h>
+OffboardCommunicator::OffboardCommunicator(SetpointTransmitter* transmitter) {
+	this->transmitter = transmitter;
+	this->exploreClient = new actionlib::SimpleActionClient<frontier_exploration::ExploreTaskAction>("/explore_server", true);
 
-actionlib::SimpleActionClient<frontier_exploration::ExploreTaskAction> *ac;
+	ROS_INFO("Waiting for frontier_exploration server");
+	this->exploreClient->waitForServer();
+	ROS_INFO("Connected to frontier_exploration server");
+}
 
-void updateFrontierCallback(const ros::TimerEvent& e) {
+void OffboardCommunicator::updateFrontierCallback(const ros::TimerEvent& e) {
 	ROS_INFO("Updating frontier");
 
 	geometry_msgs::PolygonStamped boundary;
@@ -50,11 +52,11 @@ void updateFrontierCallback(const ros::TimerEvent& e) {
 	action.explore_boundary = boundary;
 	action.explore_center = center;
 
-	ac->sendGoal(action);
+	this->exploreClient->sendGoal(action);
 
-	bool finished = ac->waitForResult(ros::Duration(5.0));
+	bool finished = this->exploreClient->waitForResult(ros::Duration(5.0));
 	if(finished) {
-		actionlib::SimpleClientGoalState state = ac->getState();
+		actionlib::SimpleClientGoalState state = exploreClient->getState();
 
 		ROS_INFO("Got updated frontier");
 	} else {
@@ -62,30 +64,23 @@ void updateFrontierCallback(const ros::TimerEvent& e) {
 	}
 }
 
+void OffboardCommunicator::transmitCallback(const ros::TimerEvent& e) {
+	ROS_INFO("Sending");
+	transmitter->transmit();
+}
+
 int main(int argc, char **argv) {
-	ros::init(argc, argv, "qex_gs");
+	ros::init(argc, argv, "offboard_comm");
 	ros::NodeHandle nh("~");
 
 	SetpointTransmitter transmitter;
 	ros::Subscriber velSubscriber = nh.subscribe("/cmd_vel", 10, &SetpointTransmitter::setpointCallback, &transmitter);
 
-	ac = new actionlib::SimpleActionClient<frontier_exploration::ExploreTaskAction>("/explore_server", true);
+	OffboardCommunicator communicator(&transmitter);
+	nh.createTimer(ros::Duration(5.0), &OffboardCommunicator::updateFrontierCallback, &communicator);
+	nh.createTimer(ros::Duration(0.10), &OffboardCommunicator::transmitCallback, &communicator);
 
-	ROS_INFO("Waiting for frontier_exploration server");
-	ac->waitForServer();
-	ROS_INFO("Connected to frontier_exploration server");
-
-	ros::Timer updateFrontierTimer = nh.createTimer(ros::Duration(5.0), updateFrontierCallback);
-
-	ros::Rate rate(10); // 10Hz
-	while(ros::ok()) {
-		ROS_INFO("Sending...");
-
-		transmitter.transmit();
-
-		ros::spinOnce();
-		rate.sleep();
-	}
+	ros::spin();
 
 	return 0;
 }
