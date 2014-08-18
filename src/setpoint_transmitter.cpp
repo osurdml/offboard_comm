@@ -22,7 +22,7 @@ void SetpointTransmitter::setpointCallback(const geometry_msgs::Twist& twist) {
 	sp.roll[0]   =  (int16_t)  (limit(-1.0, 1.0, twist.linear.y) * AXIS_SCALE); // vy
 	sp.pitch[0]  =  (int16_t)  (limit(-1.0, 1.0, twist.linear.x) * AXIS_SCALE); // vx
 	sp.yaw[0]    =  (int16_t)  (limit(-1.0, 1.0, twist.angular.z) * AXIS_SCALE); // yawspeed
-	sp.thrust[0] =  (uint16_t) (limit(0.0, 1.0, 0.50 + twist.linear.z) * AXIS_SCALE); // vz
+	sp.thrust[0] =  (uint16_t) (1.5 * AXIS_SCALE); // z
 
 	ROS_INFO("Setpoint: %6d %6d %6d %6u",
 			sp.roll[0], sp.pitch[0], sp.yaw[0], sp.thrust[0]
