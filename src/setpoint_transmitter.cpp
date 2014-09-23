@@ -20,15 +20,15 @@ SetpointTransmitter::~SetpointTransmitter() {
 }
 
 void SetpointTransmitter::setpointCallback(const geometry_msgs::Twist& twist) {
-	sp.roll[0]   =  (int16_t)  (limit(-1.0, 1.0, twist.linear.y) * AXIS_SCALE); // vy
-	sp.pitch[0]  =  (int16_t)  (limit(-1.0, 1.0, twist.linear.x) * AXIS_SCALE); // vx
-	sp.yaw[0]    =  (int16_t)  (limit(-1.0, 1.0, twist.angular.z) * AXIS_SCALE); // yawspeed
+	sp.roll[0]   =  (int16_t)  -(limit(-1.0, 1.0, twist.linear.y / 10.0) * AXIS_SCALE); // vy
+	sp.pitch[0]  =  (int16_t)  -(limit(-1.0, 1.0, twist.linear.x / 10.0) * AXIS_SCALE); // vx
+	sp.yaw[0]    =  (int16_t)  -(limit(-1.0, 1.0, twist.angular.z / 10.0) * AXIS_SCALE); // yawspeed
 	// NOTE: PX4/Firmware modified to accept positional thrust values rather
 	// than velocities.
-	sp.thrust[0] =  (uint16_t) (1.5 * AXIS_SCALE); // z
+	sp.thrust[0] =  (uint16_t) (1.33 * AXIS_SCALE); // z
 
-	ROS_INFO("Setpoint: %6d %6d %6d %6u",
-			sp.roll[0], sp.pitch[0], sp.yaw[0], sp.thrust[0]
+	ROS_INFO("Setpoint: x=%6d y=%6d yaw=%6d z=%6u",
+			sp.pitch[0], sp.roll[0], sp.yaw[0], sp.thrust[0]
 		);
 }
 
