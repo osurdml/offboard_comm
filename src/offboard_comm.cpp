@@ -4,7 +4,6 @@ OffboardCommunicator::OffboardCommunicator(SetpointTransmitter* transmitter) : t
 }
 
 void OffboardCommunicator::transmitCallback(const ros::TimerEvent& e) {
-	ROS_INFO("Sending");
 	transmitter->transmit();
 }
 
