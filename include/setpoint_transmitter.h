@@ -4,22 +4,12 @@
 #include <algorithm>
 
 #include <boost/asio.hpp>
-#include <mavlink.h>
 
+#include <mavlink.h>
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 
-#define BUFFER_SIZE 300
-
 #define AXIS_SCALE 1000.0f
-
-#define MAVLINK_OFFBOARD_CONTROL_MODE_NONE 0
-#define MAVLINK_OFFBOARD_CONTROL_MODE_RATES 1
-#define MAVLINK_OFFBOARD_CONTROL_MODE_ATTITUDE 2
-#define MAVLINK_OFFBOARD_CONTROL_MODE_VELOCITY 3
-#define MAVLINK_OFFBOARD_CONTROL_MODE_POSITION 4
-
-typedef boost::shared_ptr<boost::asio::serial_port> serial_port_ptr;
 
 class SetpointTransmitter {
 public:
@@ -34,10 +24,10 @@ private:
 		return std::max(std::min(v, max), min);
 	}
 
-	mavlink_set_quad_swarm_roll_pitch_yaw_thrust_t sp;
+	mavlink_set_position_target_local_ned_t sp;
 
 	boost::asio::io_service io;
-	serial_port_ptr serial_port;
+	boost::asio::serial_port serial_port;
 };
 
 #endif
